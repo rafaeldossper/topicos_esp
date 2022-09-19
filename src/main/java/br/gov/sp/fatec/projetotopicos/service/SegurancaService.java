@@ -3,7 +3,9 @@ package br.gov.sp.fatec.projetotopicos.service;
 import br.gov.sp.fatec.projetotopicos.entity.Usuario;
 import java.util.List;
 
-public interface SegurancaService {
+import org.springframework.security.core.userdetails.UserDetailsService;
+
+public interface SegurancaService extends UserDetailsService {
     
     public Usuario novoUsuario(Usuario usuario);
 
