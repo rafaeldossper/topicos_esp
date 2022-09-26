@@ -1,5 +1,6 @@
 package br.gov.sp.fatec.projetotopicos.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,16 +11,21 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.gov.sp.fatec.projetotopicos.entity.Autorizacao;
 import br.gov.sp.fatec.projetotopicos.entity.Usuario;
 import br.gov.sp.fatec.projetotopicos.repository.UsuarioRepository;
+import br.gov.sp.fatec.projetotopicos.repository.AutorizacaoRepository;
 
 @Service
 public class SegurancaServiceImpl implements SegurancaService {
 
     @Autowired
     private UsuarioRepository usuarioRepo;
+
+    @Autowired
+    private AutorizacaoRepository autorizacaoRepo;
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
@@ -32,6 +38,23 @@ public class SegurancaServiceImpl implements SegurancaService {
         Usuario usuario = new Usuario();
         usuario.setNome(nome);
         usuario.setSenha(senha);
+        return novoUsuario(usuario);
+    }
+
+    @Override
+    @Transactional
+    public Usuario novoUsuario(String nome, String senha, String autorizacao) {
+        Autorizacao aut = autorizacaoRepo.findByNome(autorizacao);
+        if(aut == null) {
+            aut = new Autorizacao();
+            aut.setNome(autorizacao);
+            autorizacaoRepo.save(aut);
+        }
+        Usuario usuario = new Usuario();
+        usuario.setNome(nome);
+        usuario.setSenha(senha);
+        usuario.setAutorizacoes(new HashSet<Autorizacao>());
+        usuario.getAutorizacoes().add(aut);
         return novoUsuario(usuario);
     }
 

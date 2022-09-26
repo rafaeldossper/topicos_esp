@@ -11,6 +11,8 @@ public interface SegurancaService extends UserDetailsService {
 
     public Usuario novoUsuario(String nome, String senha);
 
+    public Usuario novoUsuario(String nome, String senha, String autorizacao);
+
     public List<Usuario> todosUsuarios();
 
     public Usuario buscarPorId(Long id);
